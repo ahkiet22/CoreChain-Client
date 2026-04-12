@@ -34,6 +34,7 @@ import { useSnackbar } from "@/hooks/useSnackbar";
 import { InputAdornment } from "@mui/material";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import FallbackSpinner from "@/components/fall-back";
+import { ROUTES } from "@/configs/route";
 
 const schema = yup.object({
   username: yup
@@ -70,7 +71,7 @@ export default function Login() {
     try {
       await login(data);
       showToast("Login successfully!", "success");
-      await router.push("/dashboard");
+      await router.push(ROUTES.ADMIN.DASHBOARD);
     } catch (error) {
       showToast("Incorrect username or password!", "error");
     } finally {
@@ -83,11 +84,11 @@ export default function Login() {
       setLoading(true);
       const token = localStorage.getItem("token");
       if (token && user?.token && user) {
-        await router.push("/dashboard");
+        await router.push(ROUTES.ADMIN.DASHBOARD);
       }
       setLoading(false);
     };
-    router.prefetch("/dashboard");
+    router.prefetch(ROUTES.ADMIN.DASHBOARD);
     checkToken();
   }, [router, user]);
 

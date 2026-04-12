@@ -49,7 +49,7 @@ export type TProject = {
   startDate: Date;
   status: Status;
   tasks: string[];
-  department?: string,
+  department?: string;
   teamMembers: string[];
   updatedAt?: Date;
   manager: {
@@ -61,8 +61,8 @@ export type TProject = {
 };
 
 export type TQueryProject = {
-  pageSize: number;
-  current: number;
+  limit: number;
+  skip: number;
   search?: string;
   status?: number;
   priority?: number;

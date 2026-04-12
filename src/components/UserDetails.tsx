@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { UserResponse } from "@/types/user";
 import { Card, CardContent, Chip, Typography, Avatar, Grid, Paper, Tooltip } from "@mui/material";
@@ -14,11 +14,11 @@ import {
   FaComments,
 } from "react-icons/fa";
 import { IconType } from "react-icons/lib";
+import { ROUTES } from "@/configs/route";
 import ButtonBack from "./ButtonBack";
 
 export default function UserDetails({ user }: { user: UserResponse }) {
   // const [loading, setLoading] = useState(false);
-
 
   //  const fetchUserPrivate = async () => {
   //   setLoading(true);
@@ -33,7 +33,6 @@ export default function UserDetails({ user }: { user: UserResponse }) {
   //     console.error(error);
   //   }
   // };
-
 
   const InfoRow = ({
     icon: Icon,
@@ -68,7 +67,7 @@ export default function UserDetails({ user }: { user: UserResponse }) {
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-[#f8fafc]">
       <div className="mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <ButtonBack />
+          <ButtonBack url={ROUTES.ADMIN.SYSTEM.USERS.ROOT} />
           <div className="text-right">
             <Typography variant="caption" className="text-slate-400 block uppercase font-bold">
               Admin View

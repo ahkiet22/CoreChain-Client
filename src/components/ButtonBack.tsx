@@ -4,19 +4,25 @@ import { IconButton } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const ButtonBack = () => {
+type ButtonBackProps = {
+  url?: string;
+};
+
+const ButtonBack: React.FC<ButtonBackProps> = ({ url }) => {
   const router = useRouter();
 
   const handleBack = React.useCallback(() => {
-    router.push("/system/users");
-  }, [router]);
+    if (url) {
+      router.push(url);
+      return;
+    }
+    router.back();
+  }, [router, url]);
+
   return (
     <IconButton
       onClick={handleBack}
       sx={{
-        // position: "absolute",
-        // top: 16,
-        // left: 16,
         marginTop: 1,
         marginLeft: 1,
         zIndex: 1,

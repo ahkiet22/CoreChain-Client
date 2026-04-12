@@ -12,6 +12,7 @@ import { IoClose } from "react-icons/io5";
 
 // -- GSAP
 import { gsap } from "gsap";
+import { ROUTES } from "@/configs/route";
 
 const MENU_ITEMS = [
   { label: "Features", href: "/features" },
@@ -147,7 +148,7 @@ export default function Header() {
                 </li>
                 {token ? (
                   <li className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-bold px-6 py-2 rounded-[var(--radius-sm)] transition-all duration-300">
-                    <Link href={"/dashboard"}>Go to Dashboard</Link>
+                    <Link href={ROUTES.ADMIN.DASHBOARD}>Go to Dashboard</Link>
                   </li>
                 ) : (
                   <li className="font-bold border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white px-4 py-1 rounded-[var(--radius-sm)] transition-all duration-300">
