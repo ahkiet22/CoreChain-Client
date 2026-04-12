@@ -4,6 +4,6 @@ export interface IUserRef {
 }
 
 export interface IPagination {
-  current?: number;
-  pageSize?: number;
+  skip?: number;
+  limit?: number;
 }

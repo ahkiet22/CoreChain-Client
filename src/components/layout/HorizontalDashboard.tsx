@@ -4,14 +4,17 @@ import { Drawer } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactNode } from "react";
 
-const MiniDrawerWidth = 58;
-const FullDrawerWidth = 240;
+const MINI_DRAWER_WIDTH = 58;
 
-// Custom styled drawer
+interface StyledDrawerProps {
+  open: boolean;
+  drawerWidth: number;
+}
+
 const StyledDrawer = styled(Drawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: open ? FullDrawerWidth : MiniDrawerWidth,
+  shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
+})<StyledDrawerProps>(({ theme, open, drawerWidth }) => ({
+  width: open ? drawerWidth : MINI_DRAWER_WIDTH,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
@@ -19,8 +22,9 @@ const StyledDrawer = styled(Drawer, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.standard,
   }),
+
   "& .MuiDrawer-paper": {
-    width: open ? FullDrawerWidth : MiniDrawerWidth,
+    width: open ? drawerWidth : MINI_DRAWER_WIDTH,
     overflowX: "hidden",
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
@@ -29,17 +33,19 @@ const StyledDrawer = styled(Drawer, {
   },
 }));
 
+interface HorizontalDashboardProps {
+  drawer: ReactNode;
+  drawerWidth: number;
+  mobileOpen: boolean;
+  handleDrawerToggle: () => void;
+}
+
 export default function HorizontalDashboard({
   drawer,
   drawerWidth,
   mobileOpen,
   handleDrawerToggle,
-}: {
-  drawer: ReactNode;
-  drawerWidth: number;
-  mobileOpen: boolean;
-  handleDrawerToggle: () => void;
-}) {
+}: HorizontalDashboardProps) {
   return (
     <>
       {/* Mobile drawer */}
@@ -48,10 +54,12 @@ export default function HorizontalDashboard({
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{ keepMounted: true }}
-        disableScrollLock={true}
+        disableScrollLock
         sx={{
           display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { width: drawerWidth },
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+          },
         }}
       >
         {drawer}
@@ -61,6 +69,7 @@ export default function HorizontalDashboard({
       <StyledDrawer
         variant="permanent"
         open={mobileOpen}
+        drawerWidth={drawerWidth}
         sx={{
           display: { xs: "none", sm: "block" },
         }}

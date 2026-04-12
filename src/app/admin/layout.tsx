@@ -1,0 +1,259 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+
+// -- Context --
+// import { AuthProvider } from "@/context/AuthContext";
+
+// -- MUI --
+import { Breadcrumbs, Collapse, Tooltip, Typography, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import List from "@mui/material/List";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Toolbar from "@mui/material/Toolbar";
+
+// -- Next --
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+
+// -- React --
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+
+// -- React-icon
+import { MdChevronRight, MdExitToApp, MdExpandMore } from "react-icons/md";
+
+// -- Utils --
+import fetchApi from "@/utils/fetchApi";
+
+// -- Configs --
+import { CONFIG_API } from "@/configs/api";
+
+// -- Hooks --
+import { useSnackbar } from "@/hooks/useSnackbar";
+
+// -- Component --
+import AbilityProvider from "@/components/AbilityProvider";
+import { useAuth } from "@/hooks/useAuth";
+import VerticalDashboard from "@/components/layout/VerticalDashboard";
+import HorizontalDashboard from "@/components/layout/HorizontalDashboard";
+import { NAVIGATION_ITEMS, TNavigationItem } from "@/configs/layout";
+import Image from "next/image";
+
+const drawerWidth = 240;
+const appBarHeight = 64;
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { Toast, showToast } = useSnackbar();
+  const theme = useTheme();
+  const { user } = useAuth();
+  const pathName = usePathname();
+
+  const handleDrawerToggle = () => {
+    // console.log(mobileOpen);
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetchApi(`${CONFIG_API.AUTH.LOGOUT}`, "POST");
+      localStorage.removeItem("token");
+      localStorage.removeItem("projects");
+      showToast("Logut successfully!", "success");
+      router.push("/login");
+    } catch (error) {
+      showToast("Error during logout. Please try again!", "error");
+    }
+  }, []);
+
+  // Item section drawer
+
+  const MenuItem = ({ item, level = 0 }: { item: TNavigationItem; level?: number }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const router = useRouter();
+    const pathName = usePathname();
+    const theme = useTheme();
+
+    const hasChildren = item.childrens && item.childrens.length > 0;
+    const isSelected = pathName === item.href;
+
+    const handleClick = (e: React.MouseEvent) => {
+      if (hasChildren) {
+        e.stopPropagation();
+        setIsExpanded(!isExpanded);
+      } else {
+        router.push(item.href);
+      }
+    };
+
+    useEffect(() => {
+      if (hasChildren && mobileOpen) {
+        const childPaths = item.childrens!.map((child) => child.href);
+        if (childPaths.includes(pathName)) {
+          setIsExpanded(true);
+        }
+      }
+    }, [pathName]);
+
+    useEffect(() => {
+      if (!mobileOpen) {
+        setIsExpanded(false);
+      }
+    }, [mobileOpen]);
+
+    const paddingLeft = 2 + level * 3;
+
+    return (
+      <Box sx={{ width: "100%", display: "block" }}>
+        <Tooltip title={item.title} placement="right" arrow>
+          <ListItem
+            onClick={handleClick}
+            sx={{
+              cursor: "pointer",
+              borderRadius: "12px",
+              mb: 0.5,
+              pl: paddingLeft,
+              transition: "all 0.3s ease",
+              backgroundColor: isSelected ? theme.palette.action.selected : "transparent",
+              color: isSelected ? theme.palette.primary.main : "inherit",
+              "&:hover": {
+                backgroundColor: theme.palette.action.hover,
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 40,
+                color: isSelected ? theme.palette.primary.main : "inherit",
+              }}
+            >
+              <item.icon size={22} />
+            </ListItemIcon>
+
+            <ListItemText
+              primary={item.title}
+              primaryTypographyProps={{
+                fontSize: "0.9rem",
+                fontWeight: isSelected ? 700 : 500,
+              }}
+            />
+
+            {hasChildren && mobileOpen && (isExpanded ? <MdExpandMore size={20} /> : <MdChevronRight size={20} />)}
+          </ListItem>
+        </Tooltip>
+
+        {hasChildren && mobileOpen && (
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.childrens?.map((child, index) => (
+                <MenuItem key={child.id} item={child} level={level + 1} />
+              ))}
+            </List>
+          </Collapse>
+        )}
+      </Box>
+    );
+  };
+  const drawer = useMemo(
+    () => (
+      <div>
+        <Toast />
+        <Toolbar className="flex! items-center! justify-center! p-1! py-2! bg-gradient-to-r! from-indigo-500! to-purple-600! shadow-md!">
+          <div className="flex items-center gap-3">
+            <div className="bg-white rounded-xl p-2 shadow">
+              <Image
+                src="/images/corechain.png"
+                alt="CoreChain Logo"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </div>
+            {mobileOpen && (
+              <div className="text-white leading-tight">
+                <p className="text-lg font-bold">CoreChain</p>
+                <p className="text-xs opacity-80">Admin Dashboard</p>
+              </div>
+            )}
+          </div>
+        </Toolbar>
+
+        <List>
+          {NAVIGATION_ITEMS.map((item) => (
+            <MenuItem key={item.id} item={item} />
+          ))}
+
+          {/* <Tooltip disableHoverListener={mobileOpen ? true : false} arrow placement="right" title="Logout">
+            <ListItem
+              sx={{
+                "&:hover": {
+                  backgroundColor: theme.palette.action.hover,
+                  transition: "background-color 0.5s",
+                },
+              }}
+              onClick={handleLogout}
+            >
+              <ListItemIcon>
+                <MdExitToApp size={24} />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </Tooltip> */}
+        </List>
+      </div>
+    ),
+    [mobileOpen, pathName, theme],
+  );
+
+  return (
+    <AbilityProvider permissions={user?.permissions}>
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        <CssBaseline />
+
+        {/* vertical */}
+        <VerticalDashboard
+          drawerWidth={drawerWidth}
+          appBarHeight={appBarHeight}
+          mobileOpen={mobileOpen}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+
+        <HorizontalDashboard
+          drawer={drawer}
+          drawerWidth={drawerWidth}
+          mobileOpen={mobileOpen}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+
+        <Box
+          sx={{
+            flex: 1,
+            paddingLeft: 3,
+            paddingRight: 3,
+            paddingTop: 10,
+            // bgcolor: theme.palette.background.default,
+            bgcolor: "#F5F7FA",
+            minHeight: "100vh",
+            width: mobileOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+          }}
+        >
+          <main className="h-full w-full transition-all duration-300">
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link color="inherit" href="/">
+                MUI
+              </Link>
+              <Link color="inherit" href="/material-ui/getting-started/installation/">
+                Core
+              </Link>
+              <Typography sx={{ color: "text.primary" }}>Breadcrumbs</Typography>
+            </Breadcrumbs>
+            {children}
+          </main>
+        </Box>
+      </Box>
+    </AbilityProvider>
+  );
+}

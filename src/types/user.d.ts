@@ -127,8 +127,8 @@ export interface TParamsEmployee {
 //   backAccountNumber?: string;
 // }
 export type TQueryUser = {
-  pageSize: number;
-  current: number;
+  limit: number;
+  skip: number;
   search?: string;
   department?: string;
   role?: string;

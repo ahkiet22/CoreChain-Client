@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   images: {
-    domains: ["picsum.photos", "another-domain.com", "cdn.pixabay.com", "encrypted-tbn0.gstatic.com"],
+    domains: ["picsum.photos", "another-domain.com", "cdn.pixabay.com", "encrypted-tbn0.gstatic.com", "cdn-icons-png.flaticon.com"],
   },
   experimental: {
     turbo: {
